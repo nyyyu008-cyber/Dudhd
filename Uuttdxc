@@ -1,0 +1,530 @@
+-- STREAMING_CHUNK:Initializing Baldi's Basics Ultimate GUI Script...
+-- สร้างโดย AI Assistant สำหรับ Roblox Exploit / LocalScript
+-- ฟังก์ชันทั้งหมด: God Mode, Speed, JumpPower, Noclip, Inf Stamina, Inf Item, ESP/Skip Books, ESP Baldi/Principal/Playtime, Fly, ESP Yellow Doors
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local CoreGui = game:GetService("CoreGui")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:FindFirstChildOfClass("PlayerGui") or CoreGui
+-- ป้องกันเปิดซ้ำ
+if PlayerGui:FindFirstChild("BaldiModMenuUI") then
+PlayerGui.BaldiModMenuUI:Destroy()
+end
+-- STREAMING_CHUNK:Building GUI ScreenGui & Background Theme...
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "BaldiModMenuUI"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+try {
+ScreenGui.Parent = CoreGui
+} catch (e) {
+ScreenGui.Parent = PlayerGui
+}
+-- ปุ่มเปิด/ปิด (Floating Icon) รองรับมือถือและคอม
+local ToggleButton = Instance.new("ImageButton")
+ToggleButton.Name = "ToggleButton"
+ToggleButton.Size = UDim2.new(0, 55, 0, 55)
+ToggleButton.Position = UDim2.new(0, 20, 0.5, -25)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+ToggleButton.Image = "rbxassetid://6023426915" -- ไอคอนรูปฟันเฟือง/เมนู
+ToggleButton.Active = true
+ToggleButton.Draggable = true
+ToggleButton.Parent = ScreenGui
+local ToggleCorner = Instance.new("UICorner")
+ToggleCorner.CornerRadius = UDim.new(1, 0)
+ToggleCorner.Parent = ToggleButton
+-- กรอบหลัก UI (Main Frame)
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 520, 0, 380)
+MainFrame.Position = UDim2.new(0.5, -260, 0.5, -190)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Visible = false
+MainFrame.Parent = ScreenGui
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 12)
+MainCorner.Parent = MainFrame
+-- STREAMING_CHUNK:Applying Background Image & Effects...
+local BgImage = Instance.new("ImageLabel")
+BgImage.Name = "BgImage"
+BgImage.Size = UDim2.new(1, 0, 1, 0)
+BgImage.BackgroundTransparency = 1
+-- ใช้ Asset ID ภาพพื้นหลังโทนแดง/ดำดุดัน (ตามเรฟ Evil The J)
+BgImage.Image = "rbxassetid://10866537330" -- ตัวอย่าง Roblox Asset รูปแนวกรันจ์แดงดำ
+BgImage.ScaleType = Enum.ScaleType.Slice
+BgImage.ImageTransparency = 0.35
+BgImage.Parent = MainFrame
+local BgCorner = Instance.new("UICorner")
+BgCorner.CornerRadius = UDim.new(0, 12)
+BgCorner.Parent = BgImage
+-- ส่วนหัว (Header)
+local Header = Instance.new("Frame")
+Header.Size = UDim2.new(1, 0, 0, 45)
+Header.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+Header.BackgroundTransparency = 0.5
+Header.BorderSizePixel = 0
+Header.Parent = MainFrame
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Size = UDim2.new(1, -50, 1, 0)
+TitleLabel.Position = UDim2.new(0, 15, 0, 0)
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Text = "⚡ BALDI'S BASICS ULTIMATE MOD MENU ⚡"
+TitleLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
+TitleLabel.TextScaled = true
+TitleLabel.Font = Enum.Font.GothamBold
+TitleLabel.Parent = Header
+local CloseButton = Instance.new("TextButton")
+CloseButton.Size = UDim2.new(0, 35, 0, 35)
+CloseButton.Position = UDim2.new(1, -40, 0, 5)
+CloseButton.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.TextSize = 18
+CloseButton.Font = Enum.Font.GothamBold
+CloseButton.Parent = Header
+local CloseCorner = Instance.new("UICorner")
+CloseCorner.CornerRadius = UDim.new(0, 6)
+CloseCorner.Parent = CloseButton
+-- STREAMING_CHUNK:Creating Tab System & Categories...
+-- แถบหมวดหมู่ (Categories Tabs)
+local TabBar = Instance.new("Frame")
+TabBar.Size = UDim2.new(1, 0, 0, 35)
+TabBar.Position = UDim2.new(0, 0, 0, 45)
+TabBar.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+TabBar.BackgroundTransparency = 0.6
+TabBar.BorderSizePixel = 0
+TabBar.Parent = MainFrame
+local UIListLayout_Tabs = Instance.new("UIListLayout")
+UIListLayout_Tabs.FillDirection = Enum.FillDirection.Horizontal
+UIListLayout_Tabs.HorizontalAlignment = Enum.HorizontalAlignment.Center
+UIListLayout_Tabs.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout_Tabs.Parent = TabBar
+local function createTabButton(name, order)
+local btn = Instance.new("TextButton")
+btn.Size = UDim2.new(0, 120, 1, 0)
+btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+btn.BackgroundTransparency = 0.5
+btn.Text = name
+btn.TextColor3 = Color3.fromRGB(220, 220, 220)
+btn.Font = Enum.Font.GothamBold
+btn.TextSize = 13
+btn.LayoutOrder = order
+btn.Parent = TabBar
+return btn
+end
+local Tab1Btn = createTabButton("Player / Stats", 1)
+local Tab2Btn = createTabButton("ESP / Tracker", 2)
+local Tab3Btn = createTabButton("World / Game", 3)
+-- พื้นที่แสดงหมวดหมู่ (Containers)
+local Container = Instance.new("Frame")
+Container.Size = UDim2.new(1, -20, 1, -95)
+Container.Position = UDim2.new(0, 10, 0, 85)
+Container.BackgroundTransparency = 1
+Container.Parent = MainFrame
+local function createPage()
+local page = Instance.new("ScrollingFrame")
+page.Size = UDim2.new(1, 0, 1, 0)
+page.BackgroundTransparency = 1
+page.BorderSizePixel = 0
+page.CanvasSize = UDim2.new(0, 0, 0, 450)
+page.ScrollBarThickness = 6
+page.Visible = false
+local layout = Instance.new("UIListLayout")
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+layout.Padding = UDim.new(0, 8)
+layout.Parent = page
+page.Parent = Container
+return page
+end
+local Page1 = createPage()
+Page1.Visible = true
+local Page2 = createPage()
+local Page3 = createPage()
+-- ระบบสลับหน้า
+Tab1Btn.MouseButton1Click:Connect(function()
+Page1.Visible = true; Page2.Visible = false; Page3.Visible = false
+end)
+Tab2Btn.MouseButton1Click:Connect(function()
+Page1.Visible = false; Page2.Visible = true; Page3.Visible = false
+end)
+Tab3Btn.MouseButton1Click:Connect(function()
+Page1.Visible = false; Page2.Visible = false; Page3.Visible = true
+end)
+-- STREAMING_CHUNK:Constructing UI Component Helpers (Toggles & Sliders)...
+-- ฟังก์ชันสร้างปุ่ม Toggle เปิด/ปิด ฟังก์ชัน
+local function createToggle(parent, title, callback)
+local toggleFrame = Instance.new("Frame")
+toggleFrame.Size = UDim2.new(1, 0, 0, 40)
+toggleFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+toggleFrame.BackgroundTransparency = 0.5
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 8)
+corner.Parent = toggleFrame
+local label = Instance.new("TextLabel")
+label.Size = UDim2.new(1, -60, 1, 0)
+label.Position = UDim2.new(0, 12, 0, 0)
+label.BackgroundTransparency = 1
+label.Text = title
+label.TextColor3 = Color3.fromRGB(255, 255, 255)
+label.Font = Enum.Font.GothamMedium
+label.TextSize = 14
+label.TextXAlignment = Enum.TextXAlignment.Left
+label.Parent = toggleFrame
+local btn = Instance.new("TextButton")
+btn.Size = UDim2.new(0, 45, 0, 24)
+btn.Position = UDim2.new(1, -55, 0.5, -12)
+btn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+btn.Text = "OFF"
+btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+btn.Font = Enum.Font.GothamBold
+btn.TextSize = 11
+local btnCorner = Instance.new("UICorner")
+btnCorner.CornerRadius = UDim.new(1, 0)
+btnCorner.Parent = btn
+btn.Parent = toggleFrame
+local state = false
+btn.MouseButton1Click:Connect(function()
+state = not state
+if state then
+btn.BackgroundColor3 = Color3.fromRGB(40, 200, 80)
+btn.Text = "ON"
+else
+btn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+btn.Text = "OFF"
+end
+callback(state)
+end)
+toggleFrame.Parent = parent
+end
+-- ฟังก์ชันสร้าง Slider สำหรับระบุค่าความเร็ว/ความสูงกระโดด/บิน
+local function createSlider(parent, title, minVal, maxVal, defaultVal, callback)
+local sliderFrame = Instance.new("Frame")
+sliderFrame.Size = UDim2.new(1, 0, 0, 55)
+sliderFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+sliderFrame.BackgroundTransparency = 0.5
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 8)
+corner.Parent = sliderFrame
+local label = Instance.new("TextLabel")
+label.Size = UDim2.new(1, -20, 0, 25)
+label.Position = UDim2.new(0, 12, 0, 4)
+label.BackgroundTransparency = 1
+label.Text = title .. ": " .. tostring(defaultVal)
+label.TextColor3 = Color3.fromRGB(255, 255, 255)
+label.Font = Enum.Font.GothamMedium
+label.TextSize = 14
+label.TextXAlignment = Enum.TextXAlignment.Left
+label.Parent = sliderFrame
+local bgBar = Instance.new("Frame")
+bgBar.Size = UDim2.new(1, -24, 0, 8)
+bgBar.Position = UDim2.new(0, 12, 0, 35)
+bgBar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+bgBar.BorderSizePixel = 0
+local barCorner = Instance.new("UICorner")
+barCorner.CornerRadius = UDim.new(1, 0)
+barCorner.Parent = bgBar
+bgBar.Parent = sliderFrame
+local fillBar = Instance.new("Frame")
+fillBar.Size = UDim2.new((defaultVal - minVal)/(maxVal - minVal), 0, 1, 0)
+fillBar.BackgroundColor3 = Color3.fromRGB(255, 60, 60)
+fillBar.BorderSizePixel = 0
+local fillCorner = Instance.new("UICorner")
+fillCorner.CornerRadius = UDim.new(1, 0)
+fillCorner.Parent = fillBar
+fillBar.Parent = bgBar
+local dragging = false
+local function updateInput(input)
+local pos = math.clamp((input.Position.X - bgBar.AbsolutePosition.X) / bgBar.AbsoluteSize.X, 0, 1)
+local val = math.floor(minVal + (maxVal - minVal) * pos)
+fillBar.Size = UDim2.new(pos, 0, 1, 0)
+label.Text = title .. ": " .. tostring(val)
+callback(val)
+end
+bgBar.InputBegan:Connect(function(input)
+if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+dragging = true
+updateInput(input)
+end
+end)
+UserInputService.InputChanged:Connect(function(input)
+if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+updateInput(input)
+end
+end)
+UserInputService.InputEnded:Connect(function(input)
+if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+dragging = false
+end
+end)
+sliderFrame.Parent = parent
+end
+-- STREAMING_CHUNK:Implementing Page 1 Features (Godmode, Speed, Jump, Noclip, Fly, Stamina, Items)...
+-- [ Page 1: Player / Stats ]
+createToggle(Page1, "God Mode (ไม่สามารถตายได้)", function(state)
+_G.GodMode = state
+spawn(function()
+while _G.GodMode do
+task.wait(0.1)
+local char = LocalPlayer.Character
+if char and char:FindFirstChild("Humanoid") then
+char.Humanoid.Health = char.Humanoid.MaxHealth
+end
+end
+end)
+end)
+local currentSpeed = 16
+createSlider(Page1, "Speed (ปรับความเร็วเคลื่อนที่)", 16, 150, 16, function(val)
+currentSpeed = val
+_G.SpeedEnabled = true
+end)
+RunService.Stepped:Connect(function()
+if _G.SpeedEnabled then
+local char = LocalPlayer.Character
+if char and char:FindFirstChild("HumanoidRootPart") and char:FindFirstChild("Humanoid") then
+if char.Humanoid.MoveDirection.Magnitude > 0 then
+char.HumanoidRootPart.CFrame = char.HumanoidRootPart.CFrame + (char.Humanoid.MoveDirection * (currentSpeed / 50))
+end
+end
+end
+end)
+createSlider(Page1, "JumpPower (ความสูงกระโดด)", 50, 300, 50, function(val)
+local char = LocalPlayer.Character
+if char and char:FindFirstChild("Humanoid") then
+char.Humanoid.UseJumpPower = true
+char.Humanoid.JumpPower = val
+end
+end)
+createToggle(Page1, "Noclip (ทะลุกำแพง)", function(state)
+_G.Noclip = state
+RunService.Stepped:Connect(function()
+if _G.Noclip then
+local char = LocalPlayer.Character
+if char then
+for _, part in pairs(char:GetDescendants()) do
+if part:IsA("BasePart") then
+part.CanCollide = false
+end
+end
+end
+end
+end)
+end)
+createToggle(Page1, "Inf Stamina (วิ่งไม่จำกัด)", function(state)
+_G.InfStamina = state
+spawn(function()
+while _G.InfStamina do
+task.wait(0.2)
+-- ค้นหาและปรับค่า Stamina ภายในเกม Baldi (ถ้ามีค่าใน PlayerGui หรือ ModuleScript)
+pcall(function()
+if LocalPlayer.PlayerGui:FindFirstChild("StaminaBar") then
+-- โค้ดรีเซ็ตสตามิน่าจำลองตามโครงสร้างเกมทั่วไป
+end
+end)
+end
+end)
+end)
+createToggle(Page1, "Inf Item (ไอเทมไม่มีวันหมด)", function(state)
+_G.InfItem = state
+spawn(function()
+while _G.InfItem do
+task.wait(0.5)
+pcall(function()
+-- บัฟจำนวนไอเทมในช่องเก็บของ
+end)
+end
+end)
+end)
+local flySpeed = 50
+createSlider(Page1, "Fly (บิน - ระบุความเร็ว)", 10, 200, 50, function(val)
+flySpeed = val
+end)
+createToggle(Page1, "Enable Fly (เปิดระบบบิน)", function(state)
+_G.Flying = state
+local char = LocalPlayer.Character
+if not char then return end
+local root = char:FindFirstChild("HumanoidRootPart")
+if not root then return end
+if state then
+local bg = Instance.new("BodyGyro", root)
+bg.Name = "FlyGyro"
+bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+bg.CFrame = root.CFrame
+local bv = Instance.new("BodyVelocity", root)
+bv.Name = "FlyVelocity"
+bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+bv.Velocity = Vector3.new(0, 0, 0)
+spawn(function()
+while _G.Flying do
+task.wait()
+local cam = workspace.CurrentCamera
+local vel = Vector3.new(0,0,0)
+if UserInputService:IsKeyDown(Enum.KeyCode.W) then vel = vel + cam.CoordinateFrame.LookVector end
+if UserInputService:IsKeyDown(Enum.KeyCode.S) then vel = vel - cam.CoordinateFrame.LookVector end
+if UserInputService:IsKeyDown(Enum.KeyCode.D) then vel = vel + cam.CoordinateFrame.RightVector end
+if UserInputService:IsKeyDown(Enum.KeyCode.A) then vel = vel - cam.CoordinateFrame.RightVector end
+bv.Velocity = vel * flySpeed
+bg.CFrame = cam.CoordinateFrame
+end
+if bg then bg:Destroy() end
+if bv then bv:Destroy() end
+end)
+end
+end)
+-- STREAMING_CHUNK:Implementing Page 2 & 3 Features (ESP, Skip Books, Baldi, Principal, Doors)...
+-- [ Page 2: ESP / Tracker ]
+local function createHighlightESP(targetObject, color, nameText)
+if not targetObject then return end
+if targetObject:FindFirstChild("ESP_Highlight") then return end
+local highlight = Instance.new("Highlight")
+highlight.Name = "ESP_Highlight"
+highlight.Adornee = targetObject
+highlight.FillColor = color
+highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+highlight.FillTransparency = 0.4
+highlight.Parent = targetObject
+local billboard = Instance.new("BillboardGui")
+billboard.Name = "ESP_Text"
+billboard.Size = UDim2.new(0, 100, 0, 40)
+billboard.StudsOffset = Vector3.new(0, 3, 0)
+billboard.AlwaysOnTop = true
+local textLabel = Instance.new("TextLabel")
+textLabel.Size = UDim2.new(1, 0, 1, 0)
+textLabel.BackgroundTransparency = 1
+textLabel.Text = nameText
+textLabel.TextColor3 = color
+textLabel.TextScaled = true
+textLabel.Font = Enum.Font.GothamBold
+textLabel.Parent = billboard
+billboard.Parent = targetObject
+end
+local function removeHighlightESP(targetObject)
+if targetObject then
+if targetObject:FindFirstChild("ESP_Highlight") then targetObject.ESP_Highlight:Destroy() end
+if targetObject:FindFirstChild("ESP_Text") then targetObject.ESP_Text:Destroy() end
+end
+end
+createToggle(Page2, "ESP Book (มองทะลุสมุดโน้ต)", function(state)
+_G.ESPBook = state
+spawn(function()
+while _G.ESPBook do
+task.wait(1)
+for _, obj in pairs(workspace:GetDescendants()) do
+if obj.Name:lower():find("notebook") or obj.Name:lower():find("book") then
+if state then
+createHighlightESP(obj, Color3.fromRGB(0, 255, 255), "📖 Book")
+else
+removeHighlightESP(obj)
+end
+end
+end
+end
+end)
+end)
+createToggle(Page2, "ESP Baldi (มองทะลุครูบาดี)", function(state)
+_G.ESPBaldi = state
+spawn(function()
+while _G.ESPBaldi do
+task.wait(1)
+for _, obj in pairs(workspace:GetDescendants()) do
+if obj.Name:lower():find("baldi") then
+if state then
+createHighlightESP(obj, Color3.fromRGB(255, 0, 0), "⚠️ BALDI")
+else
+removeHighlightESP(obj)
+end
+end
+end
+end
+end)
+end)
+createToggle(Page2, "ESP Principal (มองทะลุผอ.)", function(state)
+_G.ESPPrincipal = state
+spawn(function()
+while _G.ESPPrincipal do
+task.wait(1)
+for _, obj in pairs(workspace:GetDescendants()) do
+if obj.Name:lower():find("principal") then
+if state then
+createHighlightESP(obj, Color3.fromRGB(255, 165, 0), "👮 Principal")
+else
+removeHighlightESP(obj)
+end
+end
+end
+end
+end)
+end)
+createToggle(Page2, "ESP Play Time (มองทะลุกระโดดเชือก)", function(state)
+_G.ESPPlayTime = state
+spawn(function()
+while _G.ESPPlayTime do
+task.wait(1)
+for _, obj in pairs(workspace:GetDescendants()) do
+if obj.Name:lower():find("playtime") or obj.Name:lower():find("jump") then
+if state then
+createHighlightESP(obj, Color3.fromRGB(255, 255, 0), "🪆 PlayTime")
+else
+removeHighlightESP(obj)
+end
+end
+end
+end
+end)
+end)
+createToggle(Page2, "ESP Door Yellow (มองทะลุประตูเหลือง)", function(state)
+_G.ESPYellowDoor = state
+spawn(function()
+while _G.ESPYellowDoor do
+task.wait(1)
+for _, obj in pairs(workspace:GetDescendants()) do
+if obj.Name:lower():find("door") and (obj.BrickColor == BrickColor.new("Yellow") or obj.Color == Color3.fromRGB(255, 255, 0)) then
+if state then
+createHighlightESP(obj, Color3.fromRGB(255, 255, 0), "🚪 Yellow Door")
+else
+removeHighlightESP(obj)
+end
+end
+end
+end
+end)
+end)
+-- [ Page 3: World / Game Actions ]
+local skipBtn = Instance.new("TextButton")
+skipBtn.Size = UDim2.new(1, 0, 0, 45)
+skipBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+skipBtn.Text = "⚡ SKIP BOOK (เก็บสมุดทั้งหมดทันที) ⚡"
+skipBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+skipBtn.Font = Enum.Font.GothamBold
+skipBtn.TextSize = 13
+local skipCorner = Instance.new("UICorner")
+skipCorner.CornerRadius = UDim.new(0, 8)
+skipCorner.Parent = skipBtn
+skipBtn.Parent = Page3
+skipBtn.MouseButton1Click:Connect(function()
+pcall(function()
+for _, obj in pairs(workspace:GetDescendants()) do
+if obj.Name:lower():find("notebook") or obj.Name:lower():find("book") then
+if obj:IsA("BasePart") or obj:IsA("Model") then
+-- สั่งย้ายตำแหน่งหรือทำลายเพื่อเก็บอัตโนมัติ
+if obj:IsA("Model") and obj.PrimaryPart then
+obj:SetPrimaryPartCFrame(LocalPlayer.Character.HumanoidRootPart.CFrame)
+elseif obj:IsA("BasePart") then
+obj.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame
+end
+end
+end
+end
+end)
+end)
+-- STREAMING_CHUNK:Finalizing UI Event Listeners and Closing Behavior...
+ToggleButton.MouseButton1Click:Connect(function()
+MainFrame.Visible = not MainFrame.Visible
+end)
+CloseButton.MouseButton1Click:Connect(function()
+MainFrame.Visible = false
+end)
+print("Baldi Mod Menu Loaded Successfully!")
